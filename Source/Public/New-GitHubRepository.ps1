@@ -61,9 +61,34 @@ function New-GitHubRepository {
         [bool]$IsTemplate = $false
     )
 
-    # Populeate Body
     # Populate Body
-    $body = @{}
+    $body = @{
+        Name = $Repository
+        Private = $Private
+        HasIssues = $HasIssues
+        HasProjects = $HasProjects
+        HasWiki = $HasWiki
+        HasDiscussions = $HasDiscussions
+        AutoInit = $AutoInit
+        AllowSquashMerge = $AllowSquashMerge
+        AllowMergeCommit = $AllowMergeCommit
+        AllowRebaseMerge = $AllowRebaseMerge
+        AllowAutoMerge = $AllowAutoMerge
+        DeleteBranchOnMerge = $DeleteBranchOnMerge
+        SquashMergeCommitTitle = $SquashMergeCommitTitle
+        SquashMergeCommitMessage = $SquashMergeCommitMessage
+        MergeCommitTitle = $MergeCommitTitle
+        MergeCommitMessage = $MergeCommitMessage
+        HasDownloads = $HasDownloads
+        IsTemplate = $IsTemplate
+    }
+
+    if ($Description) { $body['Description'] = $Description}
+    if ($Homepage) { $body['Homepage'] = $Homepage}
+    if ($TeamId) { $body['TeamId'] = $TeamId}
+    if ($GitignoreTemplate) { $body['GitignoreTemplate'] = $GitignoreTemplate}
+    if ($LicenseTemplate) { $body['LicenseTemplate'] = $LicenseTemplate}
+
 
     # Invoke
     Invoke-GitHubRequest -Owner $Owner -Repository $Repository -Method 'POST' -Body $body

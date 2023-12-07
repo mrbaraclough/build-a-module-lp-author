@@ -12,25 +12,19 @@ function Update-GitHubRepository {
         [string]
         $Repository,
 
-        [string]$Name,
-
         [string]$Description,
-
         [string]$Homepage,
-
         [bool]$Private = $false,
 
         [ValidateSet("public", "private")]
         [string]$Visibility,
 
-        [object]$SecurityAndAnalysis = $null,
-
+        # [object]$SecurityAndAnalysis = $null,
         [bool]$SecurityAndAnalysisHasIssues = $true,
         [bool]$SecurityAndAnalysisHasProjects = $true,
         [bool]$SecurityAndAnalysisHasWiki = $true,
         [bool]$SecurityAndAnalysisIsTemplate = $false,
         [string]$SecurityAndAnalysisDefaultBranch,
-
         [bool]$SecurityAndAnalysisAllowSquashMerge = $true,
         [bool]$SecurityAndAnalysisAllowMergeCommit = $true,
         [bool]$SecurityAndAnalysisAllowRebaseMerge = $true,
@@ -57,7 +51,34 @@ function Update-GitHubRepository {
     )
 
     # Populate Body
-    $body = @{}
+    $body = @{
+        Name = $Repository
+        Private = $Private
+        SecurityAndAnalysisHasIssues = $SecurityAndAnalysisHasIssues
+        SecurityAndAnalysisHasProjects = $SecurityAndAnalysisHasProjects
+        SecurityAndAnalysisHasWiki = $SecurityAndAnalysisHasWiki
+        SecurityAndAnalysisIsTemplate = $SecurityAndAnalysisIsTemplate
+        SecurityAndAnalysisDefaultBranch = $SecurityAndAnalysisDefaultBranch
+        SecurityAndAnalysisAllowSquashMerge = $SecurityAndAnalysisAllowSquashMerge
+        SecurityAndAnalysisAllowMergeCommit = $SecurityAndAnalysisAllowMergeCommit
+        SecurityAndAnalysisAllowRebaseMerge = $SecurityAndAnalysisAllowRebaseMerge
+        SecurityAndAnalysisAllowAutoMerge = $SecurityAndAnalysisAllowAutoMerge
+        SecurityAndAnalysisDeleteBranchOnMerge = $SecurityAndAnalysisDeleteBranchOnMerge
+        SecurityAndAnalysisAllowUpdateBranch = $SecurityAndAnalysisAllowUpdateBranch
+        SecurityAndAnalysisUseSquashPrTitleAsDefault = $SecurityAndAnalysisUseSquashPrTitleAsDefault
+        SecurityAndAnalysisSquashMergeCommitTitle = $SecurityAndAnalysisSquashMergeCommitTitle
+        SecurityAndAnalysisSquashMergeCommitMessage = $SecurityAndAnalysisSquashMergeCommitMessage
+        SecurityAndAnalysisMergeCommitTitle = $SecurityAndAnalysisMergeCommitTitle
+        SecurityAndAnalysisMergeCommitMessage = $SecurityAndAnalysisMergeCommitMessage
+        SecurityAndAnalysisArchived = $SecurityAndAnalysisArchived
+        SecurityAndAnalysisAllowForking = $SecurityAndAnalysisAllowForking
+        SecurityAndAnalysisWebCommitSignoffRequired = $SecurityAndAnalysisWebCommitSignoffRequired
+    }
+
+    if ($Description) { $body['Description'] = $Description}
+    if ($Homepage) { $body['Homepage'] = $Homepage}
+    if ($Visibility) { $body['Visibility'] = $Visibility}
+    if ($SecurityAndAnalysisDefaultBranch) { $body['SecurityAndAnalysisDefaultBranch'] = $SecurityAndAnalysisDefaultBranch}
 
     # Invoke
     Invoke-GitHubRequest -Owner $Owner -Repository $Repository -Method 'PATCH' -Body $body
