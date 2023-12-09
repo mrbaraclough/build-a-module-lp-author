@@ -18,6 +18,8 @@ function Invoke-GitHubRequest {
         $Body
     )
 
+    # TODO: Convert GitHub result data, where there is any, from snake case to Pascal case, which is more PowerShelly.  But maybe it isn't worth the effort for an exclusively learning project.
+
     $isVerbose = $VerbosePreference -eq 'Continue'
 
     if (-not $Script:Connection) {

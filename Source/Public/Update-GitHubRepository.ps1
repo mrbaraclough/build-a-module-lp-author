@@ -62,6 +62,8 @@ function Update-GitHubRepository {
         $Force = $false
     )
 
+    # TODO: Add security_and_analysis parameter.  But I'm not sure it's work the effort for a learning project.
+
     $isVerbose = $VerbosePreference -eq 'Continue'
 
     # Populate Body
