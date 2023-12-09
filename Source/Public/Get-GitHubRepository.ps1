@@ -1,4 +1,14 @@
 function Get-GitHubRepository {
+<#
+.SYNOPSIS
+    Gets the specified GitHub repository.
+.DESCRIPTION
+    Get-GitHubRepository gets the GitHub repository specified by the owner and repository name.
+.EXAMPLE
+    Get-GitHubRepository -Owner joeGitHub -Repository HelloWorld
+
+    Returns the HelloWorld GitHub repository belonging to user joeGitHub.
+#>
     [CmdletBinding()]
     param (
         # Owner
@@ -12,5 +22,7 @@ function Get-GitHubRepository {
         [string]
         $Repository
     )
-    Invoke-GitHubRequest -Owner $Owner -Repository $Repository -Method 'GET'
+
+    $isVerbose = $VerbosePreference -eq 'Continue'
+    Invoke-GitHubRequest -Method 'GET' -Target "repos/$Owner/$Repository" -Verbose:$isVerbose
 }

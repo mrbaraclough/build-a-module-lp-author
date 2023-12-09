@@ -1,5 +1,15 @@
 function Update-GitHubRepository {
-    [CmdletBinding()]
+<#
+.SYNOPSIS
+    Updates a GitHub repository attributes.
+.DESCRIPTION
+    Update-GitHubRepository updates a GitHub repository's attributes.
+.EXAMPLE
+    Update-GitHubRepository -Owner joeGitHub -Repository 'HelloWorld' -Description 'This is the updated repository description'
+
+    Updates the description of the HelloWorld repository belonging to joeGitHub.
+#>
+    [CmdletBinding(SupportsShouldProcess=$true,ConfirmImpact='High')]
     param (
         # Owner
         [Parameter(Mandatory=$true,Position=0)]
@@ -19,68 +29,70 @@ function Update-GitHubRepository {
         [ValidateSet("public", "private")]
         [string]$Visibility,
 
-        # [object]$SecurityAndAnalysis = $null,
-        [bool]$SecurityAndAnalysisHasIssues = $true,
-        [bool]$SecurityAndAnalysisHasProjects = $true,
-        [bool]$SecurityAndAnalysisHasWiki = $true,
-        [bool]$SecurityAndAnalysisIsTemplate = $false,
-        [string]$SecurityAndAnalysisDefaultBranch,
-        [bool]$SecurityAndAnalysisAllowSquashMerge = $true,
-        [bool]$SecurityAndAnalysisAllowMergeCommit = $true,
-        [bool]$SecurityAndAnalysisAllowRebaseMerge = $true,
-        [bool]$SecurityAndAnalysisAllowAutoMerge = $false,
-        [bool]$SecurityAndAnalysisDeleteBranchOnMerge = $false,
-        [bool]$SecurityAndAnalysisAllowUpdateBranch = $false,
-        [bool]$SecurityAndAnalysisUseSquashPrTitleAsDefault = $false,
+        [bool]$HasIssues = $true,
+        [bool]$HasProjects = $true,
+        [bool]$HasWiki = $true,
+        [bool]$IsTemplate = $false,
+        [string]$DefaultBranch,
+        [bool]$AllowSquashMerge = $true,
+        [bool]$AllowMergeCommit = $true,
+        [bool]$AllowRebaseMerge = $true,
+        [bool]$AllowAutoMerge = $false,
+        [bool]$DeleteBranchOnMerge = $false,
+        [bool]$AllowUpdateBranch = $false,
+        [bool]$UseSquashPrTitleAsDefault = $false,
 
-        [ValidateSet("PR_TITLE", "COMMIT_OR_PR_TITLE")]
-        [string]$SecurityAndAnalysisSquashMergeCommitTitle = "PR_TITLE",
+        [ValidateSet('PR_TITLE', 'COMMIT_OR_PR_TITLE')]
+        [string]$SquashMergeCommitTitle,
 
-        [ValidateSet("PR_BODY", "COMMIT_MESSAGES", "BLANK")]
-        [string]$SecurityAndAnalysisSquashMergeCommitMessage = "PR_BODY",
+        [ValidateSet('PR_BODY', 'COMMIT_MESSAGES', 'BLANK')]
+        [string]$SquashMergeCommitMessage,
 
-        [ValidateSet("PR_TITLE", "MERGE_MESSAGE")]
-        [string]$SecurityAndAnalysisMergeCommitTitle = "PR_TITLE",
+        [ValidateSet('PR_TITLE', 'NERGE_MESSAGE')]
+        [string]$MergeCommitTitle,
 
-        [ValidateSet("PR_TITLE", "PR_BODY", "BLANK")]
-        [string]$SecurityAndAnalysisMergeCommitMessage = "PR_TITLE",
+        [ValidateSet('PR_TITLE', 'PR_BODY', 'BLANK')]
+        [string]$MergeCommitMessage,
 
-        [bool]$SecurityAndAnalysisArchived = $false,
-        [bool]$SecurityAndAnalysisAllowForking = $false,
-        [bool]$SecurityAndAnalysisWebCommitSignoffRequired = $false
+        [bool]$Archived = $false,
+        [bool]$WebCommitSignoffRequired = $false,
+
+        # Force
+        [switch]
+        $Force = $false
     )
 
+    $isVerbose = $VerbosePreference -eq 'Continue'
+
     # Populate Body
-    $body = @{
-        Name = $Repository
-        Private = $Private
-        SecurityAndAnalysisHasIssues = $SecurityAndAnalysisHasIssues
-        SecurityAndAnalysisHasProjects = $SecurityAndAnalysisHasProjects
-        SecurityAndAnalysisHasWiki = $SecurityAndAnalysisHasWiki
-        SecurityAndAnalysisIsTemplate = $SecurityAndAnalysisIsTemplate
-        SecurityAndAnalysisDefaultBranch = $SecurityAndAnalysisDefaultBranch
-        SecurityAndAnalysisAllowSquashMerge = $SecurityAndAnalysisAllowSquashMerge
-        SecurityAndAnalysisAllowMergeCommit = $SecurityAndAnalysisAllowMergeCommit
-        SecurityAndAnalysisAllowRebaseMerge = $SecurityAndAnalysisAllowRebaseMerge
-        SecurityAndAnalysisAllowAutoMerge = $SecurityAndAnalysisAllowAutoMerge
-        SecurityAndAnalysisDeleteBranchOnMerge = $SecurityAndAnalysisDeleteBranchOnMerge
-        SecurityAndAnalysisAllowUpdateBranch = $SecurityAndAnalysisAllowUpdateBranch
-        SecurityAndAnalysisUseSquashPrTitleAsDefault = $SecurityAndAnalysisUseSquashPrTitleAsDefault
-        SecurityAndAnalysisSquashMergeCommitTitle = $SecurityAndAnalysisSquashMergeCommitTitle
-        SecurityAndAnalysisSquashMergeCommitMessage = $SecurityAndAnalysisSquashMergeCommitMessage
-        SecurityAndAnalysisMergeCommitTitle = $SecurityAndAnalysisMergeCommitTitle
-        SecurityAndAnalysisMergeCommitMessage = $SecurityAndAnalysisMergeCommitMessage
-        SecurityAndAnalysisArchived = $SecurityAndAnalysisArchived
-        SecurityAndAnalysisAllowForking = $SecurityAndAnalysisAllowForking
-        SecurityAndAnalysisWebCommitSignoffRequired = $SecurityAndAnalysisWebCommitSignoffRequired
+    $body = [ordered]@{
+        name = $Repository
+        private = $Private
+        has_issues = $HasIssues
+        has_projects = $HasProjects
+        has_wiki = $HasWiki
+        is_template = $IsTemplate
+        allow_squash_merge = $AllowSquashMerge
+        allow_merge_commit = $AllowMergeCommit
+        allow_rebase_merge = $AllowRebaseMerge
+        allow_auto_merge = $AllowAutoMerge
+        delete_branch_on_merge = $DeleteBranchOnMerge
+        allow_update_branch = $AllowUpdateBranch
+        use_squash_pr_title_as_default = $UseSquashPrTitleAsDefault
+        archived = $Archived
+        web_commit_signoff_required = $WebCommitSignoffRequired
     }
 
-    if ($Description) { $body['Description'] = $Description}
-    if ($Homepage) { $body['Homepage'] = $Homepage}
-    if ($Visibility) { $body['Visibility'] = $Visibility}
-    if ($SecurityAndAnalysisDefaultBranch) { $body['SecurityAndAnalysisDefaultBranch'] = $SecurityAndAnalysisDefaultBranch}
+    if ($Description) { $body['description'] = $Description}
+    if ($Homepage) { $body['homepage'] = $Homepage}
+    if ($Visibility) { $body['visibility'] = $Visibility}
+    if ($DefaultBranch) { $body['default_branch'] = $DefaultBranch}
+    if ($SquashMergeCommitTitle) { $body['squash_merge_commit_title'] = $SquashMergeCommitTitle}
+    if ($SquashMergeCommitMessage) { $body['squash_merge_commit_message'] = $SquashMergeCommitMessage}
+    if ($MergeCommitTitle) { $body['merge_commit_title'] = $MergeCommitTitle}
+    if ($MergeCommitMessage) { $body['merge_commit_message'] = $MergeCommitMessage}
 
-    # Invoke
-    Invoke-GitHubRequest -Owner $Owner -Repository $Repository -Method 'PATCH' -Body $body
-
+    if ($Force -or $PSCmdlet.ShouldProcess("GitHub user [$Owner]", "Update GitHub repository [$Repository]")) {
+        Invoke-GitHubRequest -Method 'PATCH' -Target "repos/$Owner/$Repository" -Body $body -Verbose:$isVerbose
+    }
 }

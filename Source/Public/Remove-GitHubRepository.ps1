@@ -1,4 +1,14 @@
 function Remove-GitHubRepository
+<#
+.SYNOPSIS
+    Deletes the specified GitHub repository.
+.DESCRIPTION
+    Remove-GitHubRepository deletes the specified GitHub repository for the specified user.
+.EXAMPLE
+    Remove-GitHubRepository -Owner joeGitHub -Repository HelloWorld
+
+    Delete's the HelloWorld repository belonging to joeGitHub.
+#>
 {
     [CmdletBinding(SupportsShouldProcess=$true,ConfirmImpact='High')]
     param (
@@ -11,10 +21,16 @@ function Remove-GitHubRepository
         [Parameter(Mandatory=$true,Position=1)]
         [Alias('Name')]
         [string]
-        $Repository
+        $Repository,
+
+        # Force
+        [switch]
+        $Force = $false
     )
 
-    if ($PSCmdlet.ShouldProcess("$Owner/$Repository", "Delete repository")) {
-        Invoke-GitHubRequest -Owner $Owner -Repository $Repository -Method 'DELETE'
+    $isVerbose = $VerbosePreference -eq 'Continue'
+
+    if ($Force -or $PSCmdlet.ShouldProcess("$Owner/$Repository", "Delete repository")) {
+        Invoke-GitHubRequest -Method 'DELETE' -Target "repos/$Owner/$Repository" -Verbose:$isVerbose
     }
 }
