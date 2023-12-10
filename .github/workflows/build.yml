@@ -22,7 +22,9 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      
+      - name: Get working directory
+        shell: pwsh
+        run: Write-Host $PWD
       - name: Check out module
         uses: actions/checkout@v4
 
