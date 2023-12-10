@@ -26,9 +26,11 @@ jobs:
       - name: Check out module
         uses: actions/checkout@v4
 
-      - name: Install ModuleBUilder
+      - name: Install ModuleBuilder
         shell: pwsh
-        run: Import-Module -Name ModuleBuilder
+        run: |
+          Set-PSRepository PSGallery -InstallationPolicy Trusted
+          Import-Module -Name ModuleBuilder
 
       - name: Build module
         shell: pwsh
