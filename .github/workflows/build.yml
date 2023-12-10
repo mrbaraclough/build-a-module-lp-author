@@ -24,7 +24,8 @@ jobs:
     steps:
       - name: Get working directory
         shell: pwsh
-        run: Write-Host $PWD
+        run: Write-Output "PWD: [$PWD]"
+        
       - name: Check out module
         uses: actions/checkout@v4
 
@@ -32,7 +33,7 @@ jobs:
         shell: pwsh
         run: |
           Set-PSRepository PSGallery -InstallationPolicy Trusted
-          Import-Module -Name ModuleBuilder
+          Install-Module -Name ModuleBuilder -ErrorAction Stop
 
       - name: Build module
         shell: pwsh
