@@ -33,4 +33,4 @@ jobs:
 
       - name: Build module
         shell: pwsh
-        run: Build-Module -SourcePath .\Source
+        run: Build-Module -SourcePath .\Source\Rocinante.GitHub.psd1
