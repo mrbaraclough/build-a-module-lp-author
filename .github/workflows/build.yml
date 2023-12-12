@@ -28,11 +28,25 @@ jobs:
       - name: Install ModuleBuilder
         shell: pwsh
         run: |
+          # Install ModuleBuilder
           Set-PSRepository PSGallery -InstallationPolicy Trusted
           Install-Module -Name ModuleBuilder -ErrorAction Stop
 
       - name: Build module
         shell: pwsh
         run: |
-          Get-Location | Write-Output
+          # Invoke ModuleBuildler
           Build-Module -SourcePath .\Source\Rocinante.GitHub.psd1
+
+      - name: Setup Git config
+        run: |
+          # Setup the user name and email.
+          git config user.name "GitHub Actions Bot"
+          git config user.email "<>"
+
+      - name: Commit
+        run: |
+          # Stage, commit and push the updated files
+          git add .\Output\*.*
+          git commit -m "ModuleBuilder output"
+          git push origin master
