@@ -33,7 +33,7 @@ Copyright = '2023'
 Description = 'Manages GitHub directly from PowerShell'
 
 # Minimum version of the PowerShell engine required by this module
-PowerShellVersion = '7.3'
+PowerShellVersion = '7.2'
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
 FunctionsToExport = @('Connect-GitHub','Get-GitHubRepository','New-GitHubRepository','Remove-GitHubRepository','Update-GitHubRepository')
@@ -129,5 +129,3 @@ VariablesToExport = '*'
 # DefaultCommandPrefix = ''
 
 }
-
-

@@ -1,4 +1,4 @@
-﻿#Region '.\Private\Invoke-GitHubRequest.ps1' 0
+﻿#Region './Private/Invoke-GitHubRequest.ps1' 0
 function Invoke-GitHubRequest {
     [CmdletBinding()]
     param (
@@ -18,6 +18,8 @@ function Invoke-GitHubRequest {
         [System.Collections.IDictionary]
         $Body
     )
+
+    # TODO: Convert GitHub result data, where there is any, from snake case to Pascal case, which is more PowerShelly.  But maybe it isn't worth the effort for an exclusively learning project.
 
     $isVerbose = $VerbosePreference -eq 'Continue'
 
@@ -64,8 +66,8 @@ function Invoke-GitHubRequest {
 
     Invoke-RestMethod @invokeParameters
 }
-#EndRegion '.\Private\Invoke-GitHubRequest.ps1' 66
-#Region '.\Public\Connect-GitHub.ps1' 0
+#EndRegion './Private/Invoke-GitHubRequest.ps1' 68
+#Region './Public/Connect-GitHub.ps1' 0
 function Connect-GitHub {
 <#
 .SYNOPSIS
@@ -131,8 +133,8 @@ function Connect-GitHub {
     Write-Verbose "Using ServerAddress [$($Script:Connection.ServerAddress)]."
     Write-Verbose "Using APIVersion [$($Script:Connection.APIVersion)]."
 }
-#EndRegion '.\Public\Connect-GitHub.ps1' 66
-#Region '.\Public\Get-GitHubRepository.ps1' 0
+#EndRegion './Public/Connect-GitHub.ps1' 66
+#Region './Public/Get-GitHubRepository.ps1' 0
 function Get-GitHubRepository {
 <#
 .SYNOPSIS
@@ -161,8 +163,8 @@ function Get-GitHubRepository {
     $isVerbose = $VerbosePreference -eq 'Continue'
     Invoke-GitHubRequest -Method 'GET' -Target "repos/$Owner/$Repository" -Verbose:$isVerbose
 }
-#EndRegion '.\Public\Get-GitHubRepository.ps1' 29
-#Region '.\Public\New-GitHubRepository.ps1' 0
+#EndRegion './Public/Get-GitHubRepository.ps1' 29
+#Region './Public/New-GitHubRepository.ps1' 0
 function New-GitHubRepository {
 <#
 .SYNOPSIS
@@ -258,8 +260,8 @@ function New-GitHubRepository {
         Invoke-GitHubRequest -Method 'POST' -Target "user/repos" -Body $body -Verbose:$isVerbose
     }
 }
-#EndRegion '.\Public\New-GitHubRepository.ps1' 96
-#Region '.\Public\Remove-GitHubRepository.ps1' 0
+#EndRegion './Public/New-GitHubRepository.ps1' 96
+#Region './Public/Remove-GitHubRepository.ps1' 0
 function Remove-GitHubRepository
 <#
 .SYNOPSIS
@@ -296,8 +298,8 @@ function Remove-GitHubRepository
         Invoke-GitHubRequest -Method 'DELETE' -Target "repos/$Owner/$Repository" -Verbose:$isVerbose
     }
 }
-#EndRegion '.\Public\Remove-GitHubRepository.ps1' 37
-#Region '.\Public\Update-GitHubRepository.ps1' 0
+#EndRegion './Public/Remove-GitHubRepository.ps1' 37
+#Region './Public/Update-GitHubRepository.ps1' 0
 function Update-GitHubRepository {
 <#
 .SYNOPSIS
@@ -398,4 +400,4 @@ function Update-GitHubRepository {
         Invoke-GitHubRequest -Method 'PATCH' -Target "repos/$Owner/$Repository" -Body $body -Verbose:$isVerbose
     }
 }
-#EndRegion '.\Public\Update-GitHubRepository.ps1' 101
+#EndRegion './Public/Update-GitHubRepository.ps1' 101
