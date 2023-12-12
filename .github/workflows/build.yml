@@ -38,6 +38,11 @@ jobs:
           # Invoke ModuleBuildler
           Build-Module -SourcePath .\Source\Rocinante.GitHub.psd1
 
+      - name: Diagnostics
+        run: |
+          # Contents of directory.
+          ls .
+
       - name: Setup Git config
         run: |
           # Setup the user name and email.
