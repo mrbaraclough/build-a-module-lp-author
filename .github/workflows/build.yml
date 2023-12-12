@@ -41,7 +41,7 @@ jobs:
       - name: Diagnostics
         run: |
           # Contents of directory.
-          ls .
+          ls -R .\Output
 
       - name: Setup Git config
         run: |
@@ -52,6 +52,6 @@ jobs:
       - name: Commit
         run: |
           # Stage, commit and push the updated files
-          git add .\Output\*.*
+          git add .\Output\*.* --all
           git commit -m "ModuleBuilder output"
           git push origin master
