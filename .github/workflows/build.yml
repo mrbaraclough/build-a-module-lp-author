@@ -52,6 +52,7 @@ jobs:
       - name: Commit
         run: |
           # Stage, commit and push the updated files
-          git add ./Output/* --all
+          cd Output
+          git add *
           git commit -m "ModuleBuilder output"
           git push origin master
