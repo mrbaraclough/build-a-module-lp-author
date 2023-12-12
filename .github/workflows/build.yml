@@ -55,4 +55,4 @@ jobs:
           cd Output
           git add *
           git commit -m "ModuleBuilder output"
-          git push origin master
+          git push origin main
