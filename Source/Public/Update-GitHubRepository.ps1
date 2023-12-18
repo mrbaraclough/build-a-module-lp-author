@@ -24,10 +24,7 @@ function Update-GitHubRepository {
 
         [string]$Description,
         [string]$Homepage,
-        [bool]$Private = $false,
-
-        [ValidateSet("public", "private")]
-        [string]$Visibility,
+        [switch]$Private = $false,
 
         [bool]$HasIssues = $true,
         [bool]$HasProjects = $true,
@@ -63,6 +60,7 @@ function Update-GitHubRepository {
     )
 
     # TODO: Add security_and_analysis parameter.  But I'm not sure it's work the effort for a learning project.
+    # TODO: Rework [bool] parameters into legit PowerShell [switch] parameters that default to false.  E.g., SuppressIssues instead of HasIssues.
 
     $isVerbose = $VerbosePreference -eq 'Continue'
 
@@ -87,7 +85,6 @@ function Update-GitHubRepository {
 
     if ($Description) { $body['description'] = $Description}
     if ($Homepage) { $body['homepage'] = $Homepage}
-    if ($Visibility) { $body['visibility'] = $Visibility}
     if ($DefaultBranch) { $body['default_branch'] = $DefaultBranch}
     if ($SquashMergeCommitTitle) { $body['squash_merge_commit_title'] = $SquashMergeCommitTitle}
     if ($SquashMergeCommitMessage) { $body['squash_merge_commit_message'] = $SquashMergeCommitMessage}
