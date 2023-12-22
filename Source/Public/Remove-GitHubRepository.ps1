@@ -25,12 +25,17 @@ function Remove-GitHubRepository
 
         # Force
         [switch]
-        $Force = $false
+        $Force = $false,
+
+        # Request only
+        [Parameter()]
+        [switch]
+        $RequestOnly = $false
     )
 
     $isVerbose = $VerbosePreference -eq 'Continue'
 
     if ($Force -or $PSCmdlet.ShouldProcess("$Owner/$Repository", "Delete repository")) {
-        Invoke-GitHubRequest -Method 'DELETE' -Target "repos/$Owner/$Repository" -Verbose:$isVerbose
+        Invoke-GitHubRequest -Method 'DELETE' -Target "repos/$Owner/$Repository" -RequestOnly:$RequestOnly -Verbose:$isVerbose
     }
 }

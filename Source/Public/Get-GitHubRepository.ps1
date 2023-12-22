@@ -20,9 +20,14 @@ function Get-GitHubRepository {
         [Parameter(Mandatory=$true,Position=1)]
         [Alias('Name')]
         [string]
-        $Repository
+        $Repository,
+
+        # Request only
+        [Parameter()]
+        [switch]
+        $RequestOnly = $false
     )
 
     $isVerbose = $VerbosePreference -eq 'Continue'
-    Invoke-GitHubRequest -Method 'GET' -Target "repos/$Owner/$Repository" -Verbose:$isVerbose
+    Invoke-GitHubRequest -Method 'GET' -Target "repos/$Owner/$Repository" -RequestOnly:$RequestOnly -Verbose:$isVerbose
 }

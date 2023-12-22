@@ -56,7 +56,12 @@ function Update-GitHubRepository {
 
         # Force
         [switch]
-        $Force = $false
+        $Force = $false,
+
+        # Request only
+        [Parameter()]
+        [switch]
+        $RequestOnly = $false
     )
 
     # TODO: Add security_and_analysis parameter.  But I'm not sure it's work the effort for a learning project.
@@ -92,6 +97,6 @@ function Update-GitHubRepository {
     if ($MergeCommitMessage) { $body['merge_commit_message'] = $MergeCommitMessage}
 
     if ($Force -or $PSCmdlet.ShouldProcess("GitHub user [$Owner]", "Update GitHub repository [$Repository]")) {
-        Invoke-GitHubRequest -Method 'PATCH' -Target "repos/$Owner/$Repository" -Body $body -Verbose:$isVerbose
+        Invoke-GitHubRequest -Method 'PATCH' -Target "repos/$Owner/$Repository" -Body $body -RequestOnly:$RequestOnly -Verbose:$isVerbose
     }
 }

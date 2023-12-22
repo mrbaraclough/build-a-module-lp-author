@@ -56,7 +56,12 @@ function New-GitHubRepository {
 
         # Force
         [switch]
-        $Force = $false
+        $Force = $false,
+
+        # Request only
+        [Parameter()]
+        [switch]
+        $RequestOnly = $false
     )
 
     $isVerbose = $VerbosePreference -eq 'Continue'
@@ -90,6 +95,6 @@ function New-GitHubRepository {
     if ($MergeCommitMessage) { $body['merge_commit_message'] = $MergeCommitMessage }
 
     if ($Force -or $PSCmdlet.ShouldProcess("GitHub user [$Owner]", "Create new GitHub repository [$Repository]")) {
-        Invoke-GitHubRequest -Method 'POST' -Target "user/repos" -Body $body -Verbose:$isVerbose
+        Invoke-GitHubRequest -Method 'POST' -Target "user/repos" -Body $body -RequestOnly:$RequestOnly -Verbose:$isVerbose
     }
 }

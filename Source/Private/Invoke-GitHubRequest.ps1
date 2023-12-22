@@ -15,7 +15,12 @@ function Invoke-GitHubRequest {
         # Other parameters
         [Parameter()]
         [System.Collections.IDictionary]
-        $Body
+        $Body,
+
+        # Request only
+        [Parameter()]
+        [switch]
+        $RequestOnly = $false
     )
 
     # TODO: Convert GitHub result data, where there is any, from snake case to Pascal case, which is more PowerShelly.  But maybe it isn't worth the effort for an exclusively learning project.
@@ -63,5 +68,15 @@ function Invoke-GitHubRequest {
         $invokeParameters['ContentType'] = 'application/json'
     }
 
-    Invoke-RestMethod @invokeParameters
+    if ($RequestOnly) {
+        $invokeParameters
+    } else {
+        try {
+            $response = Invoke-WebRequest @invokeParameters
+            $response | Format-List -Property StatusCode, StatusDescription, RawContentLength | Out-String | Write-Verbose
+            $response | ConvertFrom-Json
+        } catch {
+            $_.Exception.Response.ReasonPhrase | Add-Member -PassThru -NotePropertyName StatusCode -NotePropertyValue $_.Exception.Response.StatusCode
+        }
+    }
 }
