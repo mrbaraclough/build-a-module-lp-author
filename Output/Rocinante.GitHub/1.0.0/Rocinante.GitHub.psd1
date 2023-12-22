@@ -36,7 +36,7 @@ Description = 'Manages GitHub directly from PowerShell'
 PowerShellVersion = '7.2'
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-FunctionsToExport = @('Connect-GitHub','Get-GitHubRepository','New-GitHubRepository','Remove-GitHubRepository','Update-GitHubRepository')
+FunctionsToExport = @('Connect-GitHub','Get-GitHubRepository','Get-GitHubRepositoryList','New-GitHubRepository','Remove-GitHubRepository','Update-GitHubRepository')
 
 # Aliases to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no aliases to export.
 AliasesToExport = '*'
@@ -129,3 +129,5 @@ VariablesToExport = '*'
 # DefaultCommandPrefix = ''
 
 }
+
+

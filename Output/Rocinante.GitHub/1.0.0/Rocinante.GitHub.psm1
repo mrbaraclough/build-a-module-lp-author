@@ -1,4 +1,4 @@
-﻿#Region './Private/Invoke-GitHubRequest.ps1' 0
+﻿#Region '.\Private\Invoke-GitHubRequest.ps1' 0
 function Invoke-GitHubRequest {
     [CmdletBinding()]
     param (
@@ -16,7 +16,12 @@ function Invoke-GitHubRequest {
         # Other parameters
         [Parameter()]
         [System.Collections.IDictionary]
-        $Body
+        $Body,
+
+        # Request only
+        [Parameter()]
+        [switch]
+        $RequestOnly = $false
     )
 
     # TODO: Convert GitHub result data, where there is any, from snake case to Pascal case, which is more PowerShelly.  But maybe it isn't worth the effort for an exclusively learning project.
@@ -64,10 +69,20 @@ function Invoke-GitHubRequest {
         $invokeParameters['ContentType'] = 'application/json'
     }
 
-    Invoke-RestMethod @invokeParameters
+    if ($RequestOnly) {
+        $invokeParameters
+    } else {
+        try {
+            $response = Invoke-WebRequest @invokeParameters
+            $response | Format-List -Property StatusCode, StatusDescription, RawContentLength | Out-String | Write-Verbose
+            $response | ConvertFrom-Json
+        } catch {
+            $_.Exception.Response.ReasonPhrase | Add-Member -PassThru -NotePropertyName StatusCode -NotePropertyValue $_.Exception.Response.StatusCode
+        }
+    }
 }
-#EndRegion './Private/Invoke-GitHubRequest.ps1' 68
-#Region './Public/Connect-GitHub.ps1' 0
+#EndRegion '.\Private\Invoke-GitHubRequest.ps1' 83
+#Region '.\Public\Connect-GitHub.ps1' 0
 function Connect-GitHub {
 <#
 .SYNOPSIS
@@ -133,8 +148,8 @@ function Connect-GitHub {
     Write-Verbose "Using ServerAddress [$($Script:Connection.ServerAddress)]."
     Write-Verbose "Using APIVersion [$($Script:Connection.APIVersion)]."
 }
-#EndRegion './Public/Connect-GitHub.ps1' 66
-#Region './Public/Get-GitHubRepository.ps1' 0
+#EndRegion '.\Public\Connect-GitHub.ps1' 66
+#Region '.\Public\Get-GitHubRepository.ps1' 0
 function Get-GitHubRepository {
 <#
 .SYNOPSIS
@@ -157,14 +172,38 @@ function Get-GitHubRepository {
         [Parameter(Mandatory=$true,Position=1)]
         [Alias('Name')]
         [string]
-        $Repository
+        $Repository,
+
+        # Request only
+        [Parameter()]
+        [switch]
+        $RequestOnly = $false
     )
 
     $isVerbose = $VerbosePreference -eq 'Continue'
-    Invoke-GitHubRequest -Method 'GET' -Target "repos/$Owner/$Repository" -Verbose:$isVerbose
+    Invoke-GitHubRequest -Method 'GET' -Target "repos/$Owner/$Repository" -RequestOnly:$RequestOnly -Verbose:$isVerbose
 }
-#EndRegion './Public/Get-GitHubRepository.ps1' 29
-#Region './Public/New-GitHubRepository.ps1' 0
+#EndRegion '.\Public\Get-GitHubRepository.ps1' 34
+#Region '.\Public\Get-GitHubRepositoryList.ps1' 0
+function Get-GitHubRepositoryList {
+    [CmdletBinding()]
+    param (
+        # Owner
+        [Parameter(Mandatory=$true,Position=0)]
+        [string]
+        $Owner,
+
+        # Request only
+        [Parameter()]
+        [switch]
+        $RequestOnly = $false
+    )
+
+    $isVerbose = $VerbosePreference -eq 'Continue'
+    Invoke-GitHubRequest -Method 'GET' -Target "users/$Owner/repos" -RequestOnly:$RequestOnly -Verbose:$isVerbose
+}
+#EndRegion '.\Public\Get-GitHubRepositoryList.ps1' 18
+#Region '.\Public\New-GitHubRepository.ps1' 0
 function New-GitHubRepository {
 <#
 .SYNOPSIS
@@ -223,7 +262,12 @@ function New-GitHubRepository {
 
         # Force
         [switch]
-        $Force = $false
+        $Force = $false,
+
+        # Request only
+        [Parameter()]
+        [switch]
+        $RequestOnly = $false
     )
 
     $isVerbose = $VerbosePreference -eq 'Continue'
@@ -257,11 +301,11 @@ function New-GitHubRepository {
     if ($MergeCommitMessage) { $body['merge_commit_message'] = $MergeCommitMessage }
 
     if ($Force -or $PSCmdlet.ShouldProcess("GitHub user [$Owner]", "Create new GitHub repository [$Repository]")) {
-        Invoke-GitHubRequest -Method 'POST' -Target "user/repos" -Body $body -Verbose:$isVerbose
+        Invoke-GitHubRequest -Method 'POST' -Target "user/repos" -Body $body -RequestOnly:$RequestOnly -Verbose:$isVerbose
     }
 }
-#EndRegion './Public/New-GitHubRepository.ps1' 96
-#Region './Public/Remove-GitHubRepository.ps1' 0
+#EndRegion '.\Public\New-GitHubRepository.ps1' 101
+#Region '.\Public\Remove-GitHubRepository.ps1' 0
 function Remove-GitHubRepository
 <#
 .SYNOPSIS
@@ -289,17 +333,22 @@ function Remove-GitHubRepository
 
         # Force
         [switch]
-        $Force = $false
+        $Force = $false,
+
+        # Request only
+        [Parameter()]
+        [switch]
+        $RequestOnly = $false
     )
 
     $isVerbose = $VerbosePreference -eq 'Continue'
 
     if ($Force -or $PSCmdlet.ShouldProcess("$Owner/$Repository", "Delete repository")) {
-        Invoke-GitHubRequest -Method 'DELETE' -Target "repos/$Owner/$Repository" -Verbose:$isVerbose
+        Invoke-GitHubRequest -Method 'DELETE' -Target "repos/$Owner/$Repository" -RequestOnly:$RequestOnly -Verbose:$isVerbose
     }
 }
-#EndRegion './Public/Remove-GitHubRepository.ps1' 37
-#Region './Public/Update-GitHubRepository.ps1' 0
+#EndRegion '.\Public\Remove-GitHubRepository.ps1' 42
+#Region '.\Public\Update-GitHubRepository.ps1' 0
 function Update-GitHubRepository {
 <#
 .SYNOPSIS
@@ -326,10 +375,7 @@ function Update-GitHubRepository {
 
         [string]$Description,
         [string]$Homepage,
-        [bool]$Private = $false,
-
-        [ValidateSet("public", "private")]
-        [string]$Visibility,
+        [switch]$Private = $false,
 
         [bool]$HasIssues = $true,
         [bool]$HasProjects = $true,
@@ -361,10 +407,16 @@ function Update-GitHubRepository {
 
         # Force
         [switch]
-        $Force = $false
+        $Force = $false,
+
+        # Request only
+        [Parameter()]
+        [switch]
+        $RequestOnly = $false
     )
 
     # TODO: Add security_and_analysis parameter.  But I'm not sure it's work the effort for a learning project.
+    # TODO: Rework [bool] parameters into legit PowerShell [switch] parameters that default to false.  E.g., SuppressIssues instead of HasIssues.
 
     $isVerbose = $VerbosePreference -eq 'Continue'
 
@@ -389,7 +441,6 @@ function Update-GitHubRepository {
 
     if ($Description) { $body['description'] = $Description}
     if ($Homepage) { $body['homepage'] = $Homepage}
-    if ($Visibility) { $body['visibility'] = $Visibility}
     if ($DefaultBranch) { $body['default_branch'] = $DefaultBranch}
     if ($SquashMergeCommitTitle) { $body['squash_merge_commit_title'] = $SquashMergeCommitTitle}
     if ($SquashMergeCommitMessage) { $body['squash_merge_commit_message'] = $SquashMergeCommitMessage}
@@ -397,7 +448,7 @@ function Update-GitHubRepository {
     if ($MergeCommitMessage) { $body['merge_commit_message'] = $MergeCommitMessage}
 
     if ($Force -or $PSCmdlet.ShouldProcess("GitHub user [$Owner]", "Update GitHub repository [$Repository]")) {
-        Invoke-GitHubRequest -Method 'PATCH' -Target "repos/$Owner/$Repository" -Body $body -Verbose:$isVerbose
+        Invoke-GitHubRequest -Method 'PATCH' -Target "repos/$Owner/$Repository" -Body $body -RequestOnly:$RequestOnly -Verbose:$isVerbose
     }
 }
-#EndRegion './Public/Update-GitHubRepository.ps1' 101
+#EndRegion '.\Public\Update-GitHubRepository.ps1' 103
