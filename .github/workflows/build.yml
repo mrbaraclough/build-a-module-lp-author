@@ -21,9 +21,19 @@ jobs:
     runs-on: ubuntu-latest
 
     # Steps represent a sequence of tasks that will be executed as part of the job
-    steps:        
+    steps:
       - name: Check out module
         uses: actions/checkout@v4
+
+      - name: Run Pester tests
+        env:
+          INTEGRATION_TEST_PAT: ${{ secrets.INTEGRATION_TEST_PAT }}
+        shell: pwsh
+        run: |
+          $container = New-PesterContainer -Path .\Test\Module\Module.Tests.ps1 -Data @{PersonalAccessToken = ConvertTo-SecureString -String $Env:INTEGRATION_TEST_PAT -AsPlainText -Force}
+          Invoke-Pester -PassThru -Path .\Test\Private\*
+          Invoke-Pester -PassThru -Path .\Test\Public\*
+          Invoke-Pester -PassThru -Path .\Test\Module\* -Container $container
 
       - name: Install ModuleBuilder
         shell: pwsh
