@@ -1,5 +1,5 @@
 BeforeAll {
-    . ($PSCommandPath.Replace('.Tests.ps1', '.ps1').Replace('\Test\', '\Source\'))
+    . ($PSCommandPath.Replace('.Tests.ps1', '.ps1').Replace('\Test\', '\Source\').Replace('/Test/', '/Source/'))
 }
 
 Describe 'Invoke-GitHubRequest' {
