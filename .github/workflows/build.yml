@@ -30,9 +30,10 @@ jobs:
           INTEGRATION_TEST_PAT: ${{ secrets.INTEGRATION_TEST_PAT }}
         shell: pwsh
         run: |
-          $container = New-PesterContainer -Path .\Test\Module\Module.Tests.ps1 -Data @{PersonalAccessToken = ConvertTo-SecureString -String $Env:INTEGRATION_TEST_PAT -AsPlainText -Force}
           Invoke-Pester -PassThru -Path .\Test\Private\*
           Invoke-Pester -PassThru -Path .\Test\Public\*
+          Write-Host "[$($Env:INTEGRATION_TEST_PAT.SubString(0, 12))]"
+          $container = New-PesterContainer -Path .\Test\Module\Module.Tests.ps1 -Data @{PersonalAccessToken = ConvertTo-SecureString -String $Env:INTEGRATION_TEST_PAT -AsPlainText -Force}
           Invoke-Pester -PassThru -Path .\Test\Module\* -Container $container
 
       - name: Install ModuleBuilder
