@@ -32,8 +32,8 @@ jobs:
         run: |
           Invoke-Pester -PassThru -Path .\Test\Private\*
           Invoke-Pester -PassThru -Path .\Test\Public\*
-          Write-Host "[$($Env:INTEGRATION_TEST_PAT.SubString(0, 12))]"
           $container = New-PesterContainer -Path .\Test\Module\Module.Tests.ps1 -Data @{PersonalAccessToken = ConvertTo-SecureString -String $Env:INTEGRATION_TEST_PAT -AsPlainText -Force}
+          Write-Host $container.Data
           Invoke-Pester -PassThru -Path .\Test\Module\* -Container $container
 
       - name: Install ModuleBuilder
