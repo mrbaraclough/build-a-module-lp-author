@@ -15,7 +15,7 @@ BeforeAll {
 
 Describe 'Rocinante.GitHib Module Integration Tests' {
     It 'Can connect to GitHub' {
-        Connect-GitHub -PersonalAccessToken $PersonalAccessToken
+        Connect-GitHub -PersonalAccessToken $PersonalAccessToken -Verbose 4>&1
     }
     It 'Can check for a repository' {
         $repo = Get-GitHubRepository -Owner $owner -Repository $testRepoName

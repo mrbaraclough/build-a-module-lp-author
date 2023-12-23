@@ -34,7 +34,7 @@ jobs:
           Invoke-Pester -PassThru -Path .\Test\Public\*
           $container = New-PesterContainer -Path .\Test\Module\Module.Tests.ps1 -Data @{PersonalAccessToken = ConvertTo-SecureString -String $Env:INTEGRATION_TEST_PAT -AsPlainText -Force}
           Write-Host $container.Data.Keys
-          Invoke-Pester -Output Detailed -PassThru -Path .\Test\Module\* -Container $container
+          Invoke-Pester -Output Detailed -PassThru -Path .\Test\Module\* -Container $container -Verbose
 
       - name: Install ModuleBuilder
         shell: pwsh
