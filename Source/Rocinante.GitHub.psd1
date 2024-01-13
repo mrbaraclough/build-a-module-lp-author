@@ -36,10 +36,10 @@ Description = 'Manages GitHub directly from PowerShell'
 PowerShellVersion = '7.2'
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-FunctionsToExport = '*'
+FunctionsToExport = @()
 
 # Aliases to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no aliases to export.
-AliasesToExport = '*'
+AliasesToExport = @()
 
 # Private data to pass to the module specified in RootModule/ModuleToProcess. This may also contain a PSData hashtable with additional module metadata used by PowerShell.
 PrivateData = @{
@@ -108,7 +108,7 @@ PrivateData = @{
 # NestedModules = @()
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
-CmdletsToExport = '*'
+CmdletsToExport = @()
 
 # Variables to export from this module
 VariablesToExport = '*'
