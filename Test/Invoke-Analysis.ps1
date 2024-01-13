@@ -1,1 +1,0 @@
-Invoke-ScriptAnalyzer -Path "$PSScriptRoot\..\Source\Rocinante.GitHub.psd1" -Settings "$PSScriptRoot\PSScriptAnalyzer.psd1"
